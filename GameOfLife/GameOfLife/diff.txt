@@ -1,0 +1,516 @@
+diff -r github/cl/niclabs/skandium/instructions/AbstractInstruction.java jarFIle/cl/niclabs/skandium/instructions/AbstractInstruction.java
+31,37d30
+< 	final StackTraceElement[] strace;
+< 	
+< 	AbstractInstruction(StackTraceElement[] strace){
+< 		//this.stackTraceElements = strace.toArray(new StackTraceElement[strace.size()]);
+< 		this.strace = strace;
+< 	}
+< 	
+54,59d46
+< 	}
+< 	
+< 	@Override
+< 	public StackTraceElement[] getStackTrace(){
+< 		
+< 		return strace;
+diff -r github/cl/niclabs/skandium/instructions/DaCInst.java jarFIle/cl/niclabs/skandium/instructions/DaCInst.java
+48d47
+< 	 * @param strace 
+50,51c49
+< 	public DaCInst(Condition<?> condition, Split<?, ?> split, Stack<Instruction> stack, Merge<?, ?> merge, StackTraceElement[] strace) {
+< 		super(strace);
+---
+> 	public DaCInst(Condition<?> condition, Split<?, ?> split, Stack<Instruction> stack, Merge<?, ?> merge) {
+86c84
+< 			stack.push(new MergeInst(merge, strace));
+---
+> 			stack.push(new MergeInst(merge));
+104c102
+< 		return new DaCInst(condition, split, copyStack(substack), merge, strace);
+---
+> 		return new DaCInst(condition, split, copyStack(substack), merge);
+diff -r github/cl/niclabs/skandium/instructions/ForInst.java jarFIle/cl/niclabs/skandium/instructions/ForInst.java
+37d36
+< 	 * @param strace 
+39,40c38
+< 	public ForInst(Stack<Instruction> substack, int times, StackTraceElement[] strace) {
+< 		super(strace);
+---
+> 	public ForInst(Stack<Instruction> substack, int times) {
+53,58c51,55
+< 
+< 		if (times > 0) {		
+< 			times--;
+< 			stack.push(this);
+< 			stack.addAll(substack);
+< 		}
+---
+> 		
+> 		times--;
+> 		stack.push(this);
+> 		stack.addAll(substack);
+> 		
+68c65
+< 		return new ForInst(copyStack(substack), times, strace);
+---
+> 		return new ForInst(copyStack(substack), times);
+72c69
+< }
+---
+> }
+\ No newline at end of file
+diff -r github/cl/niclabs/skandium/instructions/ForkInst.java jarFIle/cl/niclabs/skandium/instructions/ForkInst.java
+45d44
+< 	 * @param strace 
+47,48c46
+< 	public ForkInst(Split<?, ?> split, List<Stack<Instruction>> stacks, Merge<?, ?> merge, StackTraceElement[] strace) {
+< 		super(strace);
+---
+> 	public ForkInst(Split<?, ?> split, List<Stack<Instruction>> stacks, Merge<?, ?> merge) {
+73c71
+< 		stack.push(new MergeInst(merge, strace));
+---
+> 		stack.push(new MergeInst(merge));
+90c88
+< 		return new ForkInst(split, substacks, merge, strace);
+---
+> 		return new ForkInst(split, substacks, merge);
+diff -r github/cl/niclabs/skandium/instructions/IfInst.java jarFIle/cl/niclabs/skandium/instructions/IfInst.java
+42d41
+< 	 * @param strace 
+44,45c43
+< 	public IfInst(Condition<?> condition, Stack<Instruction> trueCaseStack, Stack<Instruction> falseCaseStack, StackTraceElement[] strace) {
+< 		super(strace);
+---
+> 	public IfInst(Condition<?> condition, Stack<Instruction> trueCaseStack, Stack<Instruction> falseCaseStack) {
+77c75
+< 		return new IfInst(condition, copyStack(trueCaseStack), copyStack(falseCaseStack), strace);
+---
+> 		return new IfInst(condition, copyStack(trueCaseStack), copyStack(falseCaseStack));
+diff -r github/cl/niclabs/skandium/instructions/Instruction.java jarFIle/cl/niclabs/skandium/instructions/Instruction.java
+51,55d50
+< 	
+< 	/**
+< 	 * @return The skeleton logical stack trace associated with this instruction. 
+< 	 */
+< 	public StackTraceElement[] getStackTrace();
+diff -r github/cl/niclabs/skandium/instructions/MapInst.java jarFIle/cl/niclabs/skandium/instructions/MapInst.java
+45d44
+< 	 * @param strace 
+47,49c46
+< 	public MapInst(Split<?, ?> split, Stack<Instruction> stack, Merge<?, ?> merge, StackTraceElement[] strace) {
+< 		super(strace);
+< 
+---
+> 	public MapInst(Split<?, ?> split, Stack<Instruction> stack, Merge<?, ?> merge) {
+70,71c67,68
+< 		stack.push(new MergeInst(merge, strace));
+< 
+---
+> 		stack.push(new MergeInst(merge));
+> 		
+81c78
+< 		return new MapInst(split, copyStack(substack), merge, strace);
+---
+> 		return new MapInst(split, copyStack(substack), merge);
+83c80
+< }
+---
+> }
+\ No newline at end of file
+diff -r github/cl/niclabs/skandium/instructions/MergeInst.java jarFIle/cl/niclabs/skandium/instructions/MergeInst.java
+37d36
+< 	StackTraceElement[] strace;
+39,40c38
+< 	public MergeInst(Merge<?,?> merge, StackTraceElement[] strace) {
+< 		super(strace);
+---
+> 	public MergeInst(Merge<?,?> merge) {
+51a50,55
+> 	
+> 		P[] input = (P[]) Array.newInstance(o[0].getClass(), o.length);
+> 		
+> 		for(int i=0;i<input.length;i++){
+> 			input[i]=(P)o[i];
+> 		}
+53c57
+< 		return merge.merge(o);
+---
+> 		return merge.merge(input);
+62c66
+< 		return new MergeInst(merge, strace);
+---
+> 		return new MergeInst(merge);
+64c68
+< }
+---
+> }
+\ No newline at end of file
+diff -r github/cl/niclabs/skandium/instructions/SeqInst.java jarFIle/cl/niclabs/skandium/instructions/SeqInst.java
+30c30
+< public class SeqInst extends AbstractInstruction {
+---
+> public class SeqInst implements Instruction {
+33a34
+> 	
+38d38
+< 	 * @param strace The logical stack trace of this instruction.
+40,42c40,41
+< 	public SeqInst(Execute<?,?> execute, StackTraceElement[] strace){
+< 		super(strace);
+< 		this.execute = execute;
+---
+> 	public SeqInst(Execute<?,?> execute){
+> 		this.execute=execute;
+64c63
+< 		return new SeqInst(execute, strace);
+---
+> 		return new SeqInst(execute);
+65a65
+> 	
+diff -r github/cl/niclabs/skandium/instructions/WhileInst.java jarFIle/cl/niclabs/skandium/instructions/WhileInst.java
+41d40
+< 	 * @param stackTraceElements 
+43,44c42
+< 	public WhileInst(Condition<?> condition, Stack<Instruction> stack, StackTraceElement[] strace) {
+< 		super(strace);
+---
+> 	public WhileInst(Condition<?> condition, Stack<Instruction> stack) {
+71c69
+< 		return new WhileInst(condition, copyStack(substack), strace);
+---
+> 		return new WhileInst(condition, copyStack(substack));
+diff -r github/cl/niclabs/skandium/Skandium.java jarFIle/cl/niclabs/skandium/Skandium.java
+26c26
+<  * A <code>Skandium</code> instance provides mechanism to register skeleton programs with a given Executor.
+---
+>  * A <cpde>Skandium</code> instance provides mechanism to register skeleton programs with a given Executor.
+diff -r github/cl/niclabs/skandium/skeletons/AbstractSkeleton.java jarFIle/cl/niclabs/skandium/skeletons/AbstractSkeleton.java
+35,41d34
+< 	//holds reference to source code instantiation, for skeleton logical exceptions.
+< 	StackTraceElement trace;
+< 	
+< 	protected AbstractSkeleton(){		
+< 		trace  = getInitStackElement();
+< 	}
+< 	
+65,99d57
+< 	}
+< 	
+< 	/**
+< 	 * @return A representation of the line where this skeleton was instantiated.
+< 	 */
+< 	private StackTraceElement getInitStackElement(){
+< 		
+< 		StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
+< 		
+< 		boolean start = false;
+< 		
+< 		/* Loop until we find the end of the first exception block of this class.
+< 		  	cl.niclabs.skandium.skeletons.DaC
+< 			java.lang.Thread.getStackTrace(Thread.java:1452)
+< 			cl.niclabs.skandium.skeletons.AbstractSkeleton.<init>(AbstractSkeleton.java:44)
+< 			cl.niclabs.skandium.skeletons.DaC.<init>(DaC.java:51)
+< 			cl.niclabs.skandium.skeletons.DaC.<init>(DaC.java:68)   
+< 			cl.niclabs.skandium.examples.nqueensnaive.NQueens.main(NQueens.java:53) <== This is the line we are looking for
+< 		 */
+< 		int i;
+< 		for(i=0;i<stackElements.length;i++){
+< 			if(stackElements[i].getClassName().equals(this.getClass().getCanonicalName())){
+< 				start = true;
+< 			}else if(start){
+< 				break;
+< 			}
+< 		}
+< 		
+< 		//We mix the calling stackElement with the instantiation stackElement
+< 		String className = stackElements[i-1].getClassName();  //cl.niclabs.skandium.skeletons.DaC
+< 		String method    = stackElements[i-1].getMethodName(); //<init>
+< 		String file      = stackElements[i].getFileName();     //NQueens.java
+< 		int line         = stackElements[i].getLineNumber();   //53
+< 			
+< 		return new StackTraceElement(className, method, file, line);
+diff -r github/cl/niclabs/skandium/skeletons/DaC.java jarFIle/cl/niclabs/skandium/skeletons/DaC.java
+52d51
+<     	
+diff -r github/cl/niclabs/skandium/skeletons/Farm.java jarFIle/cl/niclabs/skandium/skeletons/Farm.java
+42d41
+< 		super();
+52c51
+< 		this(new Seq<P,R>(execute));
+---
+> 		this.subskel = new Seq<P,R>(execute);
+diff -r github/cl/niclabs/skandium/skeletons/For.java jarFIle/cl/niclabs/skandium/skeletons/For.java
+43d42
+< 		super();
+diff -r github/cl/niclabs/skandium/skeletons/Fork.java jarFIle/cl/niclabs/skandium/skeletons/Fork.java
+52d51
+< 		super();
+diff -r github/cl/niclabs/skandium/skeletons/If.java jarFIle/cl/niclabs/skandium/skeletons/If.java
+46d45
+< 		super();
+diff -r github/cl/niclabs/skandium/skeletons/Map.java jarFIle/cl/niclabs/skandium/skeletons/Map.java
+47d46
+< 		super();
+diff -r github/cl/niclabs/skandium/skeletons/Pipe.java jarFIle/cl/niclabs/skandium/skeletons/Pipe.java
+31,32c31
+< 	Skeleton<P,?> stage1;
+<         Skeleton<?,R> stage2;
+---
+> 	Skeleton<P,R> stage1, stage2;
+34,35c33
+< 	public <X> Pipe(Skeleton<P,X> stage1, Skeleton<X,R> stage2){
+< 		super();
+---
+> 	public Pipe(Skeleton<P,R> stage1, Skeleton<P,R> stage2){
+40,41c38,40
+< 	public <X> Pipe(Execute<P,X> stage1,Execute<X,R> stage2){
+< 		this(new Seq<P,X>(stage1),new Seq<X,R>(stage2));
+---
+> 	public Pipe(Execute<P,R> stage1,Execute<P,R> stage2){
+> 		this.stage1=new Seq<P,R>(stage1);
+> 		this.stage2=new Seq<P,R>(stage2);
+diff -r github/cl/niclabs/skandium/skeletons/SkeletonVisitor.java jarFIle/cl/niclabs/skandium/skeletons/SkeletonVisitor.java
+47c47
+< }
+---
+> }
+\ No newline at end of file
+diff -r github/cl/niclabs/skandium/skeletons/StackBuilder.java jarFIle/cl/niclabs/skandium/skeletons/StackBuilder.java
+35d34
+< 	public Stack<StackTraceElement> strace;
+40,45d38
+< 		this.strace = new Stack<StackTraceElement>();
+< 	}
+< 
+< 	public StackBuilder(Stack<StackTraceElement> trace){
+< 		this();
+< 		this.strace.addAll(trace);
+50,52d42
+< 		
+< 		strace.add(skeleton.trace);
+< 		
+58,72c48,49
+< 		
+< 		//mark the trace of the pipe skeleton
+< 		strace.add(skeleton.trace);
+< 
+< 		//create a new stack builder for each stage
+< 		StackBuilder stage1 = new StackBuilder(strace);
+< 		StackBuilder stage2 = new StackBuilder(strace);
+< 		
+< 		//construct the stack
+< 		skeleton.stage1.accept(stage1);
+< 		skeleton.stage2.accept(stage2);
+< 		
+< 		//add the results to this stack (as there is no pipe instruction)
+< 		stack.addAll(stage2.stack);  //second stage first
+< 		stack.addAll(stage1.stack);  //first stage last
+---
+> 		skeleton.stage2.accept(this);
+> 		skeleton.stage1.accept(this);
+77,79c54
+< 		strace.add(skeleton.trace);
+< 		
+< 		stack.push(new SeqInst(skeleton.execute, getStraceAsArray()));
+---
+> 		stack.push(new SeqInst(skeleton.execute));
+84,88c59,60
+< 		
+< 		strace.add(skeleton.trace);
+< 		
+< 		StackBuilder trueCaseStackBuilder = new StackBuilder(strace);
+< 		StackBuilder falseCaseStackBuilder = new StackBuilder(strace);
+---
+> 		StackBuilder trueCaseStackBuilder = new StackBuilder();
+> 		StackBuilder falseCaseStackBuilder = new StackBuilder();
+93c65
+< 		stack.push(new IfInst(skeleton.condition, trueCaseStackBuilder.stack, falseCaseStackBuilder.stack, getStraceAsArray()));
+---
+> 		stack.push(new IfInst(skeleton.condition, trueCaseStackBuilder.stack, falseCaseStackBuilder.stack));
+98,100c70
+< 		
+< 		strace.add(skeleton.trace);
+< 		StackBuilder subStackBuilder = new StackBuilder(strace);
+---
+> 		StackBuilder subStackBuilder = new StackBuilder();
+104c74
+< 		stack.push(new WhileInst(skeleton.condition, subStackBuilder.stack, getStraceAsArray())); 
+---
+> 		stack.push(new WhileInst(skeleton.condition, subStackBuilder.stack)); 
+109,111c79
+< 		
+< 		strace.add(skeleton.trace);
+< 		StackBuilder subStackBuilder = new StackBuilder(strace);
+---
+> 		StackBuilder subStackBuilder = new StackBuilder();
+115c83
+< 		stack.push(new ForInst(subStackBuilder.stack, skeleton.times, getStraceAsArray())); 
+---
+> 		stack.push(new ForInst(subStackBuilder.stack, skeleton.times)); 
+120,122c88
+< 		
+< 		strace.add(skeleton.trace);
+< 		StackBuilder subStackBuilder = new StackBuilder(strace);
+---
+> 		StackBuilder subStackBuilder = new StackBuilder();
+126c92
+< 		stack.push(new MapInst(skeleton.split, subStackBuilder.stack ,skeleton.merge, getStraceAsArray()));
+---
+> 		stack.push(new MapInst(skeleton.split, subStackBuilder.stack ,skeleton.merge));
+134d99
+< 		strace.add(skeleton.trace);
+136c101
+< 			StackBuilder subStackBuilder = new StackBuilder(strace);
+---
+> 			StackBuilder subStackBuilder = new StackBuilder();
+140c105
+< 		stack.push(new ForkInst(skeleton.split, stacks ,skeleton.merge, getStraceAsArray()));
+---
+> 		stack.push(new ForkInst(skeleton.split, stacks ,skeleton.merge));
+145,148c110
+< 		
+< 		strace.add(skeleton.trace);
+< 		StackBuilder subStackBuilder = new StackBuilder(strace);
+< 		
+---
+> 		StackBuilder subStackBuilder = new StackBuilder();
+151c113
+< 		stack.push(new DaCInst(skeleton.condition, skeleton.split, subStackBuilder.stack, skeleton.merge, getStraceAsArray()));
+---
+> 		stack.push(new DaCInst(skeleton.condition, skeleton.split, subStackBuilder.stack, skeleton.merge));
+157,167d118
+< 	}
+< 	
+< 	private Stack<StackTraceElement> copyStackTrace(){
+< 		Stack<StackTraceElement> strace = new Stack<StackTraceElement>();
+< 		strace.addAll(this.strace);
+< 		
+< 		return strace;
+< 	}
+< 	
+< 	private StackTraceElement[] getStraceAsArray(){
+< 		return strace.toArray(new StackTraceElement[strace.size()]);
+diff -r github/cl/niclabs/skandium/skeletons/While.java jarFIle/cl/niclabs/skandium/skeletons/While.java
+35d34
+< 		super();
+diff -r github/cl/niclabs/skandium/system/Interpreter.java jarFIle/cl/niclabs/skandium/system/Interpreter.java
+23d22
+< import java.util.concurrent.ExecutionException;
+53c52
+< 		//get the current data, stack and strace
+---
+> 		//get the current data and stack
+56d54
+< 		StackTraceElement[] strace = null;
+58c56
+< 		try{	
+---
+> 		try{
+67d64
+< 				strace= inst.getStackTrace();  //stack trace in case of exception
+70c67
+< 				//check that the task has not been canceled
+---
+> 				//check that the task has not been cancelled
+95c92
+< 					//schedule children for execution
+---
+> 					//schedule chidlren for execution
+102,105c99
+< 		catch(Throwable t){
+< 	
+< 			setLogicalException(t, strace);
+< 			
+---
+> 		catch(Throwable e){
+107c101
+< 			task.setException(new ExecutionException(t));
+---
+> 			task.setException(e);
+111,148d104
+< 	}
+< 	
+< 	private static void setLogicalException(Throwable t, StackTraceElement[] strace){
+< 
+< 		ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>();
+< 
+< 		//iterate over every trace
+< 		for(int i=0;i<t.getStackTrace().length;i++){
+< 			
+< 			String className = t.getStackTrace()[i].getClassName();
+< 			Class cls;
+< 			
+< 			try {
+< 				cls = Class.forName(className);
+< 			} catch (ClassNotFoundException e) {
+< 				
+< 				list.add(t.getStackTrace()[i]);
+< 				continue; 
+< 			}
+< 			
+< 			/* If the trace belongs to an instruction then we replace it.
+< 			 * We also double check that the "next" trace corresponds to Interperter.
+< 			 * 
+< 			 * i+1:cl.niclabs.skandium.system.Interpreter.interpret(Interpreter.java:68)
+< 			 *   i:cl.niclabs.skandium.instructions.DaCInst.interpret(DaCInst.java:71) */
+< 			if( Instruction.class.isAssignableFrom(cls) && 
+< 					t.getStackTrace()[i+1].getClassName().equals(Interpreter.class.getCanonicalName())){
+< 			
+< 				for(int j=strace.length-1; j>=0; j--){
+< 					list.add(strace[j]);
+< 				}
+< 			}
+< 			else{
+< 				list.add(t.getStackTrace()[i]);
+< 			}
+< 		}
+< 
+< 		t.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
+diff -r github/cl/niclabs/skandium/system/SkandiumFuture.java jarFIle/cl/niclabs/skandium/system/SkandiumFuture.java
+109,110c109,110
+< 	public synchronized void  setException(ExecutionException e){
+< 		this.exception = e;
+---
+> 	public synchronized void  setException(Throwable t){
+> 		this.exception = new ExecutionException(t);
+diff -r github/cl/niclabs/skandium/system/TaskExecutor.java jarFIle/cl/niclabs/skandium/system/TaskExecutor.java
+20c20
+< import java.util.concurrent.PriorityBlockingQueue;
+---
+> import java.util.concurrent.LinkedBlockingQueue;
+39c39
+< 		super(maxThreads, maxThreads, 10, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>());
+---
+> 		super(maxThreads, maxThreads, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+66c66
+< }
+---
+> }
+\ No newline at end of file
+diff -r github/cl/niclabs/skandium/system/Task.java jarFIle/cl/niclabs/skandium/system/Task.java
+23,24d22
+< import java.util.concurrent.ExecutionException;
+< import java.lang.reflect.Array;
+201c199
+< 	void setException(ExecutionException e){
+---
+> 	void setException(Throwable e){
+284c282
+< 	protected <P> void notifyParent() {
+---
+> 	void notifyParent() {
+296c294
+< 				P[] results = (P []) Array.newInstance(this.getP().getClass(), parent.children.size());
+---
+> 				Object[] results = new Object[parent.children.size()];
+299c297
+< 					results[i] = (P) parent.children.get(i).getP();
+---
+> 					results[i] = parent.children.get(i).getP();
+353c351
+< }
+---
+> }
+\ No newline at end of file

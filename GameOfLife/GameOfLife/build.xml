@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Project Game of Life
+Author: Gabriele Marini (522910)
+-->
+
+<project name="GameOfLife" default="jar" basedir=".">
+
+	<!-- Propery set-->
+	<property name="src-dir" value="src" />
+	<property name="lib-dir" value="lib" />
+	<property name="bin-dir" value="bin" />
+	<property name="dist-dir" value="jar" />
+	<property name="target" value="1.8" />
+	<property name="source" value="1.8" />
+	<property name="main-class" value="it.gabrielemarini.spm.gameoflife.tests.Tests" />
+
+	<!-- Compile Classpath -->
+	<path id="compile.classpath">
+		<fileset dir="${lib-dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Clean project-->
+	<target name="clean" description="Delete bin folder" depends="jar">
+		<delete dir="${bin-dir}" />
+	</target>
+
+	<!-- Init Project-->
+	<target name="init">		
+		<mkdir dir="${bin-dir}" />
+	</target>
+
+	<!-- Build Project with javac 1.8-->
+	<target name="build" depends="init" description="Build the project">
+		<javac destdir="${bin-dir}" includeantruntime="false" source="${source}" target="${target}">
+			<src path="${src-dir}" />
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+	<!-- Pack the project in a Jar-->
+	<target name="jar" description="Pack in a Jar" depends="build">
+		<jar destfile="${dist-dir}/${ant.project.name}.jar">
+			<fileset dir="${bin-dir}" />
+			<zipgroupfileset dir="${lib-dir}" />
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+</project>
